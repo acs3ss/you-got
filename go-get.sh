@@ -37,6 +37,7 @@ fi
 
 filename="$1"
 while read -r LINE; do
+  # TODO make sure all urls are valid
   you-get -o "$target_dir" $LINE
 done < "$filename"
 
@@ -61,9 +62,17 @@ echo "Done converting videos";
 
 # check to make sure the number of files created is the same as the number of lines of the target file
 num_requested="$(wc -l "$1")"
-num_mp3="$(ls "$target_dir"/.mp3)"
-num_mp4="$(ls "$target_dir"/.mp4)"
+num_mp3="$(ls "$target_dir"/.mp3 | wc -l)"
+num_mp4="$(ls "$target_dir"/.mp4 | wc -l)"
 
+if [ "$num_requested" == "$num_mp3" ]; then
+  echo "Transfer of $num_requested files successful!"
+else
+  echo "There may have been an error during retrieval or conversion"
+  echo "Number of files requested: $num_requested"
+  echo "Number of mp4 files retrieved: $num_mp4"
+  echo "Number of mp3 files converted: $num_mp3"
+fi
 
 # clean up local directory
 if [ $debug = "n" ]; then
